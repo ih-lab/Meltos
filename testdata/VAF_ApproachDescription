@@ -1,0 +1,22 @@
+VAF CRP Count Appraoches
+
+Approach1 (incorrect):
+
+Count all concordant reads in interval, divide # by 2 and subtract discordant counts provided by Tardis
+
+Approach 2 (potentially incorrect):
+
+Due to small SVs, extend each SV one read length in each direction and count all reads in region
+
+Approach 3 (current solution):
+
+Count all concordant reads in interval, remove reads in same pair that are counted twice
+
+Approach 4
+
+Manually inspected SVs
+
+approach 7
+
+somatic - ones that overlap with somatic grocsv
+germline - one that overlap with germline grocsv
