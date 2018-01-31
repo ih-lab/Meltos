@@ -22,7 +22,7 @@ Meltos is a novel approach to estimate the variant allele frequency of somatic S
 NOTE: This will overwrite files with the same name. This prefix should include the directory in which you want the files to go.
 
 
-###Output
+### Output
 Produces a series of files based on various combinations of parameters, and places them in the directory specified by output.
 The file starts with parameter specifications used to create the file.
 #Lineage Tree Node Assignments
