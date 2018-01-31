@@ -11,13 +11,13 @@ Meltos is a novel approach to estimate the variant allele frequency of somatic S
 - Configuration file produced by Meltos input preparation script
 
 ### Input
-#Required:
+# Required:
 - "-svFile \<filename\>": name of the file which contains your preprepared SV information.
 - "-treeFile \<filename\>": name of the file which contains your premade SSNV lineage tree.
 - "-ssnvFile \<filename\>": name of the file which contains your list of SSNVs that were used in your input lineage tree.
 - "-numSamples \<integer\>": count of the number of spatially distinct samples in your sv and ssnv files.
 
-#Optional:
+# Optional:
  - "-outputFile \<filename\>:" the prefix you want for your outputfiles. If not specified, defaults to the name of your sv file +".lapsi"
   NOTE: This will overwrite files with the same name. This prefix should include the directory in which you want the files to go.
 
