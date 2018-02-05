@@ -8,9 +8,26 @@ Meltos is a novel approach to estimate the variant allele frequency of somatic S
 
 - SSNV Tree file produced by LICHEE (https://github.com/viq854/lichee)
 - Tab delimited file of SSNVs used to build tree
-- Configuration file produced by Meltos input preparation script
+- Input file produced by Meltos input preparation script
 
-### Input
+### Creating Input File
+#### Required
+- "-i,--input \<filename\>": file path to SV regions in bed file.
+- "-o,--output \<filename\>": output file name.
+- "-b,--bams \<filename(s)\>": list of bam files corresponding to tumor regions.
+- "-f,--frag \<integer(s)\>": comma separated list of average fragment lengths for each bam.
+- "-vcf \<filename(s)\>": comma separated list of vcf tardis files with deletions in each bam.
+- "-vcfbed \<filename(s)\>": comma separated list of bed files associated with tardis vcfs.
+
+### Run Example
+
+From the /release directory:
+
+```
+python prepareMeltosInput.py -i regions.bed -b PD9770A.bam,PD9770C.bam,PD9770D.bam -vcf PD9770A_del.vcf,PD9770C_del.vcf,PD9770D_del.vcf -vcfbed PD9770A_del.bed,PD9770C_del.bed,PD9770D_del.bed -f 375,353,407 -o regions.meltos
+```
+
+### Running Meltos
 #### Required:
 - "-svFile \<filename\>": name of the file which contains your preprepared SV information.
 - "-treeFile \<filename\>": name of the file which contains your premade SSNV lineage tree.
