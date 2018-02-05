@@ -21,8 +21,6 @@ Meltos is a novel approach to estimate the variant allele frequency of somatic S
 
 ### Run Example
 
-From the /release directory:
-
 ```
 python prepareMeltosInput.py -i regions.bed -b PD9770A.bam,PD9770C.bam,PD9770D.bam -vcf PD9770A_del.vcf,PD9770C_del.vcf,PD9770D_del.vcf -vcfbed PD9770A_del.bed,PD9770C_del.bed,PD9770D_del.bed -f 375,353,407 -o regions.meltos
 ```
