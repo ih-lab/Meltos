@@ -22,7 +22,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import cc.mallet.util.FileUtils;
+//import cc.mallet.util.FileUtils;
 
 
 public class LapsiEngine {
@@ -36,9 +36,11 @@ public class LapsiEngine {
 	 * The main pipeline for calling SVs using a known lineage tree.
 	 */
 	public static void callSVs(Args args) throws IOException{
+		//System.out.println("TEST!");
 		ArrayList<SVEntry> ssnvs = SSNVIO.loadSVFile(args.snvFilePath, args.numSamples);
-		
+		//System.out.println("TEST!");
 		LineageTree tree = LineageTreeIO.loadTree(args.treeFilePath, args.numSamples, ssnvs);
+		//System.out.println("TEST");
 		ArrayList<SVEntry> svs = SVIO.loadSVFile(args.svFilePath, args.numSamples, args.calcVAF);
 		String[] originals= new String[svs.size()];
 		for(int x = 0; x<svs.size(); x++){
@@ -225,15 +227,15 @@ public class LapsiEngine {
 	// ---- LAUNCH ----
 	public static void main(String[] args)throws IOException {
 		Options options = new Options(); 
-		
+		//System.out.println("FISH!");
 		// Input/Output
-		options.addOption("treeFile", "-t", true, "Input lineage tree file path [required]");
-		options.addOption("svFile", "-sv", true, "Input SV file path [required]");
-		options.addOption("numSamples", "-n", true, "Number of input samples (must be consistent with both input files) [required]");
-		options.addOption("outputFile", "-o", true, "Output file path (default: prefix is the input SV file path)");
+		options.addOption("treeFile", "t", true, "Input lineage tree file path [required]");
+		options.addOption("svFile", "sv", true, "Input SV file path [required]");
+		options.addOption("numSamples", "n", true, "Number of input samples (must be consistent with both input files) [required]");
+		options.addOption("outputFile", "o", true, "Output file path (default: prefix is the input SV file path)");
                 
                 //Calculate VAF from Genomic Counts
-                options.addOption("calcVAF", "-vaf", false, "Calculate VAF from counts provided in file");
+                options.addOption("calcVAF", "vaf", false, "Calculate VAF from counts provided in file");
                 
 		// Tree placement (TODO: similarity)
 		options.addOption("allowSVOnlyNodes", true, "Allows the placement of SVs to new tree nodes, as long as they satisfy the PP constraints.");
@@ -244,7 +246,7 @@ public class LapsiEngine {
 		options.addOption("v", "verbose", false, "Verbose mode");
 		options.addOption("h", "help", false, "Print usage");
 		
-		options.addOption("ssnvFile", "-snv", true, "Input the file containing the SVs from the lineageTree");//experimental
+		options.addOption("ssnvFile", "snv", true, "Input the file containing the SVs from the lineageTree");//experimental
 		options.addOption("negativeCutoff", "nc", true, "Give a threshold for false SVs for testing purpose. SVs indexed after that threshold are considered fake.");//experimental
 		
 		// Set the display order.
@@ -357,7 +359,7 @@ public class LapsiEngine {
 		double vafMax[] = {.05,.1,.2,.3,.4};//{.05,.2,.4,.6,.8};//{.2}
 		double vafMin[] = {.05,.1,.2,.3,.4};//{.05,.2,.4,.6,.8};//{.05};
 		double vafEr[] = {.02,.04,.06,.08,.1};//{.05,.2,.3,.4,.6,.8};//{.1};
-		double vafClusDif[] = {.05,.1,.2,.3,.4};//{.05,.2,.4,.6,.8};//{.2};
+		double vafClusDif[] ={.05,.1,.2,.3,.4};//{.05,.2,.4,.6,.8};//{.2};
 		for(double vM: vafMax)
 			for(double vMin: vafMin)
 				for(double vE: vafEr)

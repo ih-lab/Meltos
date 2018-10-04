@@ -111,7 +111,7 @@ public class SVIO {
                 i = i+1;
                 if(!entryParts[i].equals("0")) {
                     String[] counts = entryParts[i].split(";");
-
+                    System.out.println(entryParts[i]);
                     double vaf = estimateVAF(Integer.parseInt(counts[1]), Integer.parseInt(counts[2]), Integer.parseInt(counts[3]), Integer.parseInt(counts[4]), Integer.parseInt(counts[5]), Integer.parseInt(counts[6]), Integer.parseInt(counts[0]), idx);
                     entry.approxVAF[idx] = vaf;
                 } else {
@@ -201,13 +201,15 @@ public class SVIO {
             //int t = 1171662930;
             //long g = 3137161264L;
             //int l_avg = 406;
-            int read_l = 151;
-            //int read_l = 100;
+            //int read_l = 151;
+            int read_l = 100;
             //long g = 3098825702L;
             //int SVsize = 544;
             long g = 2897293955L;
-            int[] t_val = {907818900, 890042702, 907287041, 902386506, 867859429, 876372688, 867453044};
-            //int[] t_val = {1186122611,1109198318,1219667862};   
+            //int[] t_val = {907818900, 890042702, 907287041, 902386506, 867859429, 876372688, 867453044};
+            //int[] t_val = {1186122611,1109198318,1219667862,1,1};   
+            int[] t_val = {1540006722, 1540044314, 1540099738, 1539976823, 1540081622};
+            
             idx = idx-1;
             int t = t_val[idx];
             //t_samA = 1186122611;

@@ -12,7 +12,7 @@ public class TreeNode implements Comparable<TreeNode> {
 	private ArrayList<SVEntry> svs;
 	private int numSamples;
 	NodeStats nodeStats;
-	static String bProfile;
+	String bProfile;
 	
 	public TreeNode(int uniqueId, double[] centroidVafs, int[] centIndices, int numS) {
 		nodeId = uniqueId;

@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 
 public class SVEntry {
+	
+	
 	protected String id;
 	protected String description;
 	protected int[] readSupport;
@@ -13,7 +15,7 @@ public class SVEntry {
 	protected int assignedNodeId;
 	protected int numSamples;
 	protected String bProfile;
-	protected String originalProfile;
+	String originalProfile;
 	protected int clusterID;
 	protected boolean robust;
 	

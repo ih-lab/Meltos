@@ -48,11 +48,9 @@ public class LineageTreeIO {
 	final static int NUM_NODE_METADATA_FIELDS = 2;
 	private static TreeNode parseTreeNode(String line, int numSamples, ArrayList<SVEntry> ssnvs) {	
 		String[] entryParts = line.split("\t");
-                
-		if(entryParts.length < NUM_NODE_METADATA_FIELDS + numSamples) {
-			returnInputFileFormatError("Expecting " + NUM_NODE_METADATA_FIELDS + " fields and " + numSamples + " samples", line);
-		}
+		System.out.println("RAMPAGING FISH!");        
 		
+		System.out.println("RAMPAGING FISH2!");
 		Integer id = Integer.parseInt(entryParts[0].trim());
 		String profile = entryParts[1].trim();
 		if(profile.length() != numSamples) {

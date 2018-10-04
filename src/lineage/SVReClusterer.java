@@ -52,11 +52,12 @@ public class SVReClusterer {
 	//Part of a bizarre workaround for syntax problems in using the cluster class
 	public SVReClusterer(){	}
 	
-	public SVReClusterer(ArrayList<SVEntry>  svs, ArrayList<SVEntry> ssnvNodes, int numS){
+	public SVReClusterer(ArrayList<SVEntry>  svs, ArrayList<SVEntry> ssnvNodes, ArrayList<SVEntry> ssnvs, int numS){
 		toHandle = svs;
 		combinedEntries = new ArrayList<SVEntry>();
 		combinedEntries.addAll(svs);
-		combinedEntries.addAll(ssnvNodes);
+		//combinedEntries.addAll(ssnvs);
+		//combinedEntries.addAll(ssnvNodes);
 		oldSSNVs = ssnvNodes;
 		numSamples = numS;
 		filterCount0s = 0;
@@ -119,6 +120,7 @@ public class SVReClusterer {
 		makeAverageVars(groups);
 		
 		assignAmbiguousSVs2ndHeuristic(groups);
+		combinedEntries.addAll(oldSSNVs);
 		createSVGroups();
 		//checkMissing(40,groups);
 		snvsByTag = tag2SVs;
@@ -144,6 +146,8 @@ public class SVReClusterer {
 				//for(Cluster c : clusters) {
 				//	logger.fine(c.toString());
 				//}
+				if(groupId.equals("0110"))
+					System.out.println("here");
 				group.setSubPopulations(clusters);
 				//checkMissing(40,groups);
 				//System.out.println(group.toString());

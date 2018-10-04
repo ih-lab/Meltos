@@ -39,6 +39,7 @@ public class SVTreeMapper {
 	protected int filterCountNodes;
 	HashMap <String, SVGroup> greturn;
 	
+	
 	public SVTreeMapper(ArrayList<SVEntry> inputSVs, LineageTree inputTree, int numInputSamples, ArrayList<SVEntry> ssnvs)throws IOException {
 		numSamples = numInputSamples;
 		svs = inputSVs;
@@ -185,7 +186,7 @@ public class SVTreeMapper {
 			
 		}
 		
-		SVReClusterer reClusterer = new SVReClusterer(svs, formerSSNVs, numSamples);
+		SVReClusterer reClusterer = new SVReClusterer(svs, formerSSNVs, oldSSNVs, numSamples);
 		
 		HashMap<String, SVGroup> groups = reClusterer.createClusters();
 		//checkMissing(40,groups);
@@ -215,8 +216,9 @@ public class SVTreeMapper {
 			SVGroup group = groups.get(groupName);
 			if(group==null)
 				continue;
-			//if(group.subPopulations.length==0)
-				//System.out.println("?");
+			if(group.subPopulations.length==0)
+				System.out.println("?");
+
 			Cluster cluster = group.subPopulations[clusterIndex];
 			
 			ArrayList<SVEntry> toDeal = comboClusters.get(key);
@@ -443,6 +445,9 @@ public class SVTreeMapper {
 					addedNodes.add(newSystem.getNewNode().getNodeId());//Adds the newly added node to the tree's hashmap.
 					addNewSystems(newSystem.getNewNode(), tree, toBeAdded, newSystems, addedNodes);//Makes new WeightedEdgeSystems based around the new node
 					deleteOldSystems(newSystem, newSystems, addedNodes);//Removes old WeightedEdgeSystems that require an edge that was broken during the most recent change.
+					//for(WeightedEdgeSystem wes: newSystems){
+						
+					//}
 					Collections.sort(newSystems);//Resorts the weightedEdgeSystems.
 				}
 			}

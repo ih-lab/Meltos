@@ -28,7 +28,7 @@ public class SampleStats {
 		if(VAFs.isEmpty())
 			return;
 		for(Double vaf: VAFs)
-			if(vaf!=0.0){
+			if(vaf>0.003){
 				mean+=vaf;
 				count++;
 			}
@@ -42,7 +42,7 @@ public class SampleStats {
 		if(VAFs.isEmpty())
 			return;
         for(Double a :VAFs)
-        	if(a!=0){
+        	if(a>0.003){
         		std += (a-mean)*(a-mean);
         		count++;
         	}

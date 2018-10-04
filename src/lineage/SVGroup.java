@@ -259,9 +259,16 @@ public class SVGroup implements Serializable {
 			Cluster c2 = clusters[pd.clusterId2];
 			
 			// collapse into c1
-			for(Integer obs : c2.getMembership()) {
-				c1.addMember(obs);
-				svs.get(obs).setCluster(pd.clusterId1);
+			if(pd.clusterId1<pd.clusterId2)
+				for(Integer obs : c2.getMembership()) {
+					c1.addMember(obs);
+					svs.get(obs).setCluster(pd.clusterId1);
+				}
+			else{
+				for(Integer obs : c1.getMembership()) {
+					c2.addMember(obs);
+					svs.get(obs).setCluster(pd.clusterId2);
+				}
 			}
 			numClusters--;
 			
