@@ -77,7 +77,7 @@ public class SVEntry {
 				String[] stuff = {"1","3","10","12","14","15","17","18","20","22","23","24","26","27"};
 				ArrayList<String> missingList = new ArrayList<String>(Arrays.asList(stuff));
 				//if(missingList.contains(id))
-				//	System.out.println("AHAH!: "+id);
+				
 				s+="*";
 				ambiCount++;
 			}

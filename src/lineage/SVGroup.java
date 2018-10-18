@@ -69,8 +69,7 @@ public class SVGroup implements Serializable {
 				alleleFreqBySample[i][j] = snv.getVAF(sampleIndex[j]);
 			}
 		}
-		//if(groupTag.equals("00010100"))
-			//System.out.println("test");
+		
 		
 		isOriginal=false;
 	}

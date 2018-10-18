@@ -139,15 +139,13 @@ public class SVReClusterer {
 		for(String groupId : groups.keySet()) {
 			SVGroup group = groups.get(groupId);
 			if(getHammingWeight(groupId)>0){
-				//if(groupId.equals("00010100"))
-					//System.out.println("test");
+				
 				Cluster[] clusters = em(group.getAlleleFreqBySample(), group.getNumSVs(), group.getNumSamples(), group.getSVs(), group.getSampleIds());
 				//logger.fine("Clustering results for group: " + group.getTag());
 				//for(Cluster c : clusters) {
 				//	logger.fine(c.toString());
 				//}
-				if(groupId.equals("0110"))
-					System.out.println("here");
+				
 				group.setSubPopulations(clusters);
 				//checkMissing(40,groups);
 				//System.out.println(group.toString());
@@ -259,9 +257,7 @@ public class SVReClusterer {
 				atts.addElement(new Attribute("Feature" + i, i));
 			}
 			
-			//if(numObs>data.length || numFeatures>data[0].length){
-			//	System.out.println("problem!");
-			//}
+			
 			
 			Instances ds = new Instances("AAF Data", atts, numObs);
 			for(int i = 0; i < numObs; i++) {
@@ -663,7 +659,7 @@ public class SVReClusterer {
 					continue;
 				}
 				
-				//System.out.println("test");
+			
 			}
 			filterCount0s+=toRemove.size();
 			ambiguousSVs.removeAll(toRemove);

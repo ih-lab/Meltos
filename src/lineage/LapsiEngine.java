@@ -45,7 +45,7 @@ public class LapsiEngine {
 		String[] originals= new String[svs.size()];
 		for(int x = 0; x<svs.size(); x++){
 			originals[x]=svs.get(x).originalProfile;
-			System.out.println(originals[x]);
+			//System.out.println(originals[x]);
 		}
 		
 		String[] news= new String[svs.size()];
@@ -57,7 +57,7 @@ public class LapsiEngine {
 		SVTreeMapper mapper = new SVTreeMapper(svs, tree, args.numSamples, ssnvs);
 		mapper.assignSVsViaClustering();//Testing Clustering technique
 		mapper.handleUnassigned();
-		System.out.println("");
+		//System.out.println("");
 		for(String s: mapper.greturn.keySet()){
 			for(SVEntry sv: mapper.greturn.get(s).getSVs())
 				if(sv.description!="snv"){
@@ -227,7 +227,7 @@ public class LapsiEngine {
 	// ---- LAUNCH ----
 	public static void main(String[] args)throws IOException {
 		Options options = new Options(); 
-		//System.out.println("FISH!");
+		
 		// Input/Output
 		options.addOption("treeFile", "t", true, "Input lineage tree file path [required]");
 		options.addOption("svFile", "sv", true, "Input SV file path [required]");

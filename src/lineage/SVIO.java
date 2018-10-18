@@ -111,7 +111,7 @@ public class SVIO {
                 i = i+1;
                 if(!entryParts[i].equals("0")) {
                     String[] counts = entryParts[i].split(";");
-                    System.out.println(entryParts[i]);
+                    //System.out.println(entryParts[i]);
                     double vaf = estimateVAF(Integer.parseInt(counts[1]), Integer.parseInt(counts[2]), Integer.parseInt(counts[3]), Integer.parseInt(counts[4]), Integer.parseInt(counts[5]), Integer.parseInt(counts[6]), Integer.parseInt(counts[0]), idx);
                     entry.approxVAF[idx] = vaf;
                 } else {
