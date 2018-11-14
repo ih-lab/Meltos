@@ -105,7 +105,7 @@ public class SVReClusterer {
 			else{
 				toRemove.add(groupId);
 				for(SVEntry sv0: group.getSVs()){
-					//System.out.println(sv0.getId()+"Hamming Weight too low");
+					System.out.println(sv0.toString()+"Hamming Weight too low");
 					sv0.assignedNodeId=-2;
 				}
 				
@@ -154,7 +154,7 @@ public class SVReClusterer {
 				toRemove.add(groupId);
 				for(SVEntry sv0: group.getSVs()){
 					sv0.assignedNodeId=-2;
-					//System.out.println(sv0.getId()+"Hamming Weight too low");
+					System.out.println(sv0.getId()+"Hamming Weight too low");
 				}
 				filterCount0s++;
 			}
@@ -506,8 +506,8 @@ public class SVReClusterer {
 				}
 			}
 			for(String group : smallGroups) {
-				//for(SVEntry sv: tag2SVs.get(group))
-					//System.out.println(sv.getId()+" Group Too Small");
+				for(SVEntry sv: tag2SVs.get(group))
+					System.out.println(sv.getId()+" Group Too Small");
 				tag2SVs.remove(group);
 			}
 			// assign ambiguous SNVs to existing groups or create new groups
@@ -543,8 +543,8 @@ public class SVReClusterer {
 				}
 			}
 			for(String group : smallGroups) {
-				//for(SVEntry sv: tag2SVs.get(group))
-					//System.out.println(sv.getId()+" Group Too Small");
+				for(SVEntry sv: tag2SVs.get(group))
+					System.out.println(sv.getId()+" Group Too Small");
 				tag2SVs.remove(group);
 				
 			}
@@ -737,7 +737,7 @@ public class SVReClusterer {
 					sv.updateGroup(bestTarget);
 					sv.assignedNodeId=-2;
 					filterCount0s++;
-					//System.out.println(sv.getId()+"Too Close to 0");
+					System.out.println(sv.getId()+"Too Close to 0");
 					continue;
 				}
 				
@@ -750,7 +750,7 @@ public class SVReClusterer {
 					continue;
 				}
 				
-				//System.out.println(sv.getId()+"Ambiguous + No Valid Match");
+				System.out.println(sv.getId()+"Ambiguous + No Valid Match");
 			}
 			filterCount0s+=toRemove.size();
 			ambiguousSVs.removeAll(toRemove);

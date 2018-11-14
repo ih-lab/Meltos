@@ -69,6 +69,7 @@ public class SVTreeMapper {
 						//approxVAF[x]=.5;
 				}
 			}
+			sv.makeProfile(Parameters.MAX_VAF_ABSENT,Parameters.MIN_VAF_PRESENT);
 			fwV.write(sv.id+"\t"+Arrays.toString(sv.approxVAF)+"\n");
 			//System.out.println(sv);
 		}
