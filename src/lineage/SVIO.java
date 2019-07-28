@@ -38,7 +38,7 @@ public class SVIO {
                     
                 } else {
                     try {
-                    	FileWriter fwV = new FileWriter("testdata/estimatedVAFs.txt");
+                    	FileWriter fwV = new FileWriter("estimatedVAFs.txt");
                         BufferedReader rd = new BufferedReader(new FileReader(filename));
                         String currLine = rd.readLine();
                         currLine = rd.readLine();

@@ -34,7 +34,7 @@ public class SSNVIO {
 	}
 	
         
-	final static int NUM_SV_METADATA_FIELDS = 4;
+	final static int NUM_SV_METADATA_FIELDS = 3;
 	public static SVEntry parseSVEntry(String line, int numSamples) {
 		String[] entryParts = line.split("\t");
 		if(entryParts.length != (numSamples + NUM_SV_METADATA_FIELDS)) {
