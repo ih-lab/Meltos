@@ -441,8 +441,12 @@ public class SVTreeMapper {
 		//Runs until there are no more possible weightedEdgeSystems, which also implies there are no more possible nodes to add.
 		while(!newSystems.isEmpty()){
 			WeightedEdgeSystem newSystem = newSystems.remove(0);//Takes the highest weighted WeightedEdgeSystem out of the list.
-			if(meetsConstraint3(newSystem.getParentNode(), newSystem.getNewNode(), tree)){
-				if(applySystem(newSystem, tree)){//Makes the changes listed in the WeightedEdgeSystem
+			boolean applied = applySystem(newSystem,tree);
+			if(!applied){
+				System.out.println("Failed to add node");
+			}
+			else if(meetsConstraint3_version2(newSystem.getParentNode(), newSystem.getNewNode(), tree)){
+				//if(applySystem(newSystem, tree)){//Makes the changes listed in the WeightedEdgeSystem
 					addedNodes.add(newSystem.getNewNode().getNodeId());//Adds the newly added node to the tree's hashmap.
 					addNewSystems(newSystem.getNewNode(), tree, toBeAdded, newSystems, addedNodes);//Makes new WeightedEdgeSystems based around the new node
 					deleteOldSystems(newSystem, newSystems, addedNodes);//Removes old WeightedEdgeSystems that require an edge that was broken during the most recent change.
@@ -450,7 +454,9 @@ public class SVTreeMapper {
 						
 					//}
 					Collections.sort(newSystems);//Resorts the weightedEdgeSystems.
-				}
+				//}
+			}else{
+				reverseSystem(newSystem,tree);
 			}
 			
 		}
@@ -500,6 +506,9 @@ public class SVTreeMapper {
 					ArrayList<ArrayList<TreeNode>> childLists = powerList(children);
 					
 					ArrayList<WeightedEdge> toMake = new ArrayList<WeightedEdge>();
+					/*if(oldNode.getNodeId()==6 && newNode.getNodeId()==19){
+						int fish=1;
+					}*/
 					toMake.add(new WeightedEdge(oldNode, newNode, oldNode.nodeStats.probGenerate(newNode.nodeStats)));
 					ArrayList<WeightedEdge> toBreak = new ArrayList<WeightedEdge>();
 					for(ArrayList<TreeNode> toChange: childLists){
@@ -507,11 +516,16 @@ public class SVTreeMapper {
 							toMake.add(new WeightedEdge(newNode, t, t.nodeStats.probGenerate(newNode.nodeStats)));
 							toBreak.add(new WeightedEdge(oldNode, t, t.nodeStats.probGenerate(newNode.nodeStats)));
 						}
+						
+						WeightedEdgeSystem newSystem = new WeightedEdgeSystem(newNode, oldNode, toBreak, toMake);
+						newSystems.add(newSystem);
+						toBreak = new ArrayList<WeightedEdge>();
+						toMake = new ArrayList<WeightedEdge>();
+						toMake.add(new WeightedEdge(oldNode, newNode, oldNode.nodeStats.probGenerate(newNode.nodeStats)));
 					}
 					
 					
-					WeightedEdgeSystem newSystem = new WeightedEdgeSystem(newNode, oldNode, toBreak, toMake);
-					newSystems.add(newSystem);
+					
 				}
 				else{
 					ArrayList<WeightedEdge> toMake = new ArrayList<WeightedEdge>();
@@ -615,8 +629,27 @@ public class SVTreeMapper {
 		
 		return true;
 	}
-	
-	
+	//Undoes changes to the lineage tree based on the WeightedEdgeSystem's specifications
+	public boolean reverseSystem(WeightedEdgeSystem system, LineageTree tree){
+		
+		/*for(WeightedEdge edge: system.toBreak){
+			if(!meetsConstraints(edge.getParent(), edge.getChild(), tree)){
+				return false;
+			}
+		}*/
+		/*for(WeightedEdge edge: system.toMake){
+			if(tree.edges.get(edge.getParentId())==null || !tree.edges.get(edge.getParentId()).contains(edge.getChildId())){
+				return false;
+			}
+		}*/
+		for(WeightedEdge edge: system.toBreak)
+			addEdge(edge, tree);
+		for(WeightedEdge edge: system.toMake)
+			breakEdge(edge, tree);
+		tree.nodes.remove(system.getNewNode().getNodeId());
+		
+		return true;
+	}
 	//Dead end function. Does nothing at this time.
 	public void attachAllNodeTypesExperimental(HashMap<TreeNode, ArrayList<SVEntry>> auxNodes, LineageTree tree){
 		ArrayList<WeightedEdgeSystem> toCheck = new ArrayList<WeightedEdgeSystem>();
@@ -916,6 +949,70 @@ public class SVTreeMapper {
 		
 		return true;//parentSumGreater;
 	}
+	
+	
+	//This checks if the parent node has VAFs greater than the sum of its child VAFs.
+		//Need to be separate rom the other constraints because it changes during the tree modification process, and checking it simultaneously with them would be useless.
+		private boolean meetsConstraint3_version2(TreeNode parent, TreeNode child, LineageTree tree){
+			boolean parentSumGreater = true;
+			
+
+			TreeNode aNode;
+			aNode = parent;
+			for(int vInd = 0; vInd< aNode.getFullSampleLength(); vInd++){//MIGHT NEED TO CHANGE getVAFLength() to numSamples!
+				int pInd = aNode.getSampleIndex(vInd);
+				
+				double parentSum =  noiseErrorMargin();
+				double childSum = 0;
+
+				if(pInd!=-1)
+					parentSum += aNode.getVAF(pInd);
+				 
+				if(tree.edges.containsKey(aNode.getNodeId())){
+					ArrayList<Integer> testChildren = tree.edges.get(aNode.getNodeId());
+
+					for(int tID: tree.edges.get(aNode.getNodeId())){
+						
+						TreeNode altChild = tree.nodes.get(tID);
+						
+						int cInd = altChild.getSampleIndex(vInd);
+						if (cInd!=-1)
+							childSum += altChild.getVAF(cInd);
+
+					}
+				}
+				if(parentSum<childSum)
+					return false;//parentSumGreater = false;
+			}
+			aNode = child;
+			for(int vInd = 0; vInd< aNode.getFullSampleLength(); vInd++){//MIGHT NEED TO CHANGE getVAFLength() to numSamples!
+				int pInd = aNode.getSampleIndex(vInd);
+				
+				double parentSum =  noiseErrorMargin();
+				double childSum = 0;
+
+				if(pInd!=-1)
+					parentSum += aNode.getVAF(pInd);
+				 
+				if(tree.edges.containsKey(aNode.getNodeId())){
+					ArrayList<Integer> testChildren = tree.edges.get(aNode.getNodeId());
+
+					for(int tID: tree.edges.get(aNode.getNodeId())){
+						
+						TreeNode altChild = tree.nodes.get(tID);
+						
+						int cInd = altChild.getSampleIndex(vInd);
+						if (cInd!=-1)
+							childSum += altChild.getVAF(cInd);
+
+					}
+				}
+				if(parentSum<childSum)
+					return false;//parentSumGreater = false;
+			}
+			
+			return true;//parentSumGreater;
+		}
 	
 	//May need to add some filtering for low significance nodes later.
 	public void buildNodes(HashMap<GCKey, ArrayList<SVEntry>> usedClusters, HashMap<String, SVGroup> groups){

@@ -356,10 +356,10 @@ public class LapsiEngine {
 	    //THRESHOLD FOR MERGING CLUSTERS:{0.2};//
 
 		// Call into the main pipeline.#VAF ERROR:0.08#VAF LOWER THRESHOLD:0.3#VAF UPPER THRESHOLD:0.4#THRESHOLD FOR MERGING CLUSTERS:0.3
-		double vafMax[] ={.05,.1,.2,.3,.4};// {.2};//
-		double vafMin[] = {.05,.1,.2,.3,.4};//{.05};//
-		double vafEr[] = {.02,.04,.06,.08,.1};//{.02};//
-		double vafClusDif[] ={.05,.1,.2,.3,.4};//{.2};//
+		double vafMax[] = {.05};///{.05,.1,.2,.3,.4};///
+		double vafMin[] = {.05};////{.05,.1,.2,.3,.4};//
+		double vafEr[] = {.02};////{.02,.04,.06,.08,.1};//
+		double vafClusDif[] ={.05};////{.05,.1,.2,.3,.4};//
 		for(double vM: vafMax)
 			for(double vMin: vafMin)
 				for(double vE: vafEr)
