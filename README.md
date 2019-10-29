@@ -38,13 +38,13 @@ python prepareMeltosInput.py -i regions.bed -b PD9770A.bam,PD9770C.bam,PD9770D.b
 
  - "-sweep": have meltos run a series of  tests with combinations of different parameters.
 
--"-min \<arg\>":   Set an upper bound for an abscence in a sample.
+ - "-min \<arg\>":   Set an upper bound for an abscence in a sample.
 
--"-max \<arg\>":   Set a lower bound for presence in a sample.
+ - "-max \<arg\>":   Set a lower bound for presence in a sample.
 
--"-clus \<arg\>":  Set a max difference in VAF allowed for combining variant clusters.
+ - "-clus \<arg\>":  Set a max difference in VAF allowed for combining variant clusters.
 
--"-err \<arg\>":   Set how lenient to be with phylogenic constraints.
+ - "-err \<arg\>":   Set how lenient to be with phylogenic constraints.
 
 
 
