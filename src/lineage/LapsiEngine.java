@@ -83,7 +83,7 @@ public class LapsiEngine {
 			//fw0.close();
 			
 			int goodCount = SVCounterGoodOnly(t,args);
-			FileWriter fw = new FileWriter(args.outputFilePath+"Good"+goodCount+""+"_ERMAR"+Parameters.VAF_ERROR_MARGIN+"_"+"MINV"+Parameters.MAX_VAF_ABSENT+"_MAXV"+Parameters.MIN_VAF_PRESENT+"_COLAPS"+Parameters.MAX_COLLAPSE_CLUSTER_DIFF+".txt");
+			FileWriter fw = new FileWriter(args.outputFilePath+"_ERMAR"+Parameters.VAF_ERROR_MARGIN+"_"+"MINV"+Parameters.MAX_VAF_ABSENT+"_MAXV"+Parameters.MIN_VAF_PRESENT+"_COLAPS"+Parameters.MAX_COLLAPSE_CLUSTER_DIFF+".txt");
 			fw.write("#VAF ERROR:" + Parameters.VAF_ERROR_MARGIN);
 			fw.write("#VAF LOWER THRESHOLD:" + Parameters.MAX_VAF_ABSENT);
 			fw.write("#VAF UPPER THRESHOLD:" + Parameters.MIN_VAF_PRESENT);
@@ -99,7 +99,7 @@ public class LapsiEngine {
 			
 			if(args.usingThreshold){
 				int badandGoodCount = SVCounterBadAndGood(t,args);
-				fw = new FileWriter(args.outputFilePath+"BadAndGood"+badandGoodCount+""+"_ERMAR"+Parameters.VAF_ERROR_MARGIN+"_"+"MINV"+Parameters.MAX_VAF_ABSENT+"_MAXV"+Parameters.MIN_VAF_PRESENT+"_COLAPS"+Parameters.MAX_COLLAPSE_CLUSTER_DIFF+".txt");
+				fw = new FileWriter(args.outputFilePath+badandGoodCount+""+"_ERMAR"+Parameters.VAF_ERROR_MARGIN+"_"+"MINV"+Parameters.MAX_VAF_ABSENT+"_MAXV"+Parameters.MIN_VAF_PRESENT+"_COLAPS"+Parameters.MAX_COLLAPSE_CLUSTER_DIFF+".txt");
 				fw.write("#VAF ERROR:" + Parameters.VAF_ERROR_MARGIN);
 				fw.write("#VAF LOWER THRESHOLD:" + Parameters.MAX_VAF_ABSENT);
 				fw.write("#VAF UPPER THRESHOLD:" + Parameters.MIN_VAF_PRESENT);
@@ -107,7 +107,7 @@ public class LapsiEngine {
 				snvNodeWriterDebugger(fw, mapper.tree.nodes);
 				svNodeWriterDebugger(fw, mapper.potentialNewNodes, mapper.tree.nodes);
 				svInviableNodeWriterDebugger(fw, mapper.potentialNewNodes, mapper.tree.nodes);
-				unassignedSVWriter(fw, mapper.potentialNewNodes);
+				//unassignedSVWriter(fw, mapper.potentialNewNodes);
 				filteredSVWriter(fw, mapper.unassignedSVs);
 				dataCollector(fw, mapper, mapper.tree);
 				profileDifferenceWriter(fw, originalProfiles, newProfiles);
@@ -227,6 +227,8 @@ public class LapsiEngine {
 	// ---- LAUNCH ----
 	public static void main(String[] args)throws IOException {
 		Options options = new Options(); 
+		boolean sweep = false;
+		
 		
 		// Input/Output
 		options.addOption("treeFile", "t", true, "Input lineage tree file path [required]");
@@ -243,12 +245,16 @@ public class LapsiEngine {
 		// SV filtering
 		//options.addOption("minDepth", true, "Minimum number of reads supporting the event.");
 				
-		options.addOption("v", "verbose", false, "Verbose mode");
+		
 		options.addOption("h", "help", false, "Print usage");
 		
 		options.addOption("ssnvFile", "snv", true, "Input the file containing the SVs from the lineageTree");//experimental
-		options.addOption("negativeCutoff", "nc", true, "Give a threshold for false SVs for testing purpose. SVs indexed after that threshold are considered fake.");//experimental
-		
+		//options.addOption("negativeCutoff", "nc", true, "Give a threshold for false SVs for testing purpose. SVs indexed after that threshold are considered fake.");//experimental
+		options.addOption("sweep","sw", false, "Have Meltos loop over a large number of possible parameterizations and output all of them.");
+		options.addOption("min","minimumThreshold", true, "Set an upper bound for an abscence in a sample.");
+		options.addOption("max","maximumThreshold", true, "Set a lower bound for a presence in a sample.");
+		options.addOption("clus","clusterSpacing",true,"Set a max difference in VAF allowed for combining variant clusters.");
+		options.addOption("err","error",true,"Set how lenient to be with phylogenic constraints.");
 		// Set the display order.
 		ArrayList<Option> optionsList = new ArrayList<Option>();
 		optionsList.add(options.getOption("treeFile"));
@@ -257,10 +263,15 @@ public class LapsiEngine {
 		optionsList.add(options.getOption("outputFile"));
                 optionsList.add(options.getOption("calcVAF"));
 		optionsList.add(options.getOption("allowSVOnlyNodes"));
-		optionsList.add(options.getOption("v"));
+		
 		optionsList.add(options.getOption("h"));
 		optionsList.add(options.getOption("ssnvFile"));
-		optionsList.add(options.getOption("negativeCutoff"));
+		//optionsList.add(options.getOption("negativeCutoff"));
+		optionsList.add(options.getOption("sweep"));
+		optionsList.add(options.getOption("min"));
+		optionsList.add(options.getOption("max"));
+		optionsList.add(options.getOption("clus"));
+		optionsList.add(options.getOption("err"));
 		
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmdLine = null;
@@ -273,7 +284,7 @@ public class LapsiEngine {
 			hf.printHelp("lapsi", options);
 			System.exit(-1);
 		}
-		
+		System.out.println("Meltos v1.02");
 		// Set-up the input parameters.
 		Args params = new Args();	
 		if(cmdLine.hasOption("treeFile")) {
@@ -300,7 +311,7 @@ public class LapsiEngine {
 		if(cmdLine.hasOption("outputFile")) {
 			params.outputFilePath = cmdLine.getOptionValue("outputFile");	
 		} else {
-			params.outputFilePath = params.svFilePath + ".lapsi";
+			params.outputFilePath = params.svFilePath + ".meltos";
 		}
                 
                 if(cmdLine.hasOption("calcVAF")) {
@@ -310,7 +321,10 @@ public class LapsiEngine {
 		if(cmdLine.hasOption("allowSVOnlyNodes")) {
 			params.allowSVOnlyNodes = true;
 		}	
-		
+		if(cmdLine.hasOption("sweep")){
+			sweep=true;
+			
+		}
 		if(cmdLine.hasOption("h")) {
 			new HelpFormatter().printHelp(" ", options);
 		}
@@ -319,17 +333,9 @@ public class LapsiEngine {
 			params.negativeThreshold=Integer.parseInt(cmdLine.getOptionValue("negativeCutoff"));
 			params.usingThreshold=true;
 		}
-		// Setup the logger verbosity level.
-		ConsoleHandler h = new ConsoleHandler();
-		h.setFormatter(new LogFormatter());
-		h.setLevel(Level.INFO);
-		logger.setLevel(Level.INFO);
-		if(cmdLine.hasOption("v")) {
-			h.setLevel(Level.FINEST);
-			logger.setLevel(Level.FINEST);
-		}
+	
 		
-		//Experimental
+		
 		if(cmdLine.hasOption("ssnvFile")){
 			params.snvFilePath = cmdLine.getOptionValue("ssnvFile");
 		}
@@ -339,8 +345,7 @@ public class LapsiEngine {
 			System.exit(-1);
 		}
 		
-		logger.addHandler(h);
-		logger.setUseParentHandlers(false);
+	
 		File fileFolder = new File(params.outputFilePath);
 		fileFolder.mkdir();
 		File[] files = fileFolder.listFiles();
@@ -350,35 +355,74 @@ public class LapsiEngine {
 	        }
 	    }
 	    
-	    //VAF ERROR:{0.02};//
-	    //VAF LOWER THRESHOLD:{0.05};//
-	    //VAF UPPER THRESHOLD:{0.3};//
-	    //THRESHOLD FOR MERGING CLUSTERS:{0.2};//
+	    
 
 		// Call into the main pipeline.#VAF ERROR:0.08#VAF LOWER THRESHOLD:0.3#VAF UPPER THRESHOLD:0.4#THRESHOLD FOR MERGING CLUSTERS:0.3
-		double vafMax[] = {.05};///{.05,.1,.2,.3,.4};///
-		double vafMin[] = {.05};////{.05,.1,.2,.3,.4};//
-		double vafEr[] = {.02};////{.02,.04,.06,.08,.1};//
-		double vafClusDif[] ={.05};////{.05,.1,.2,.3,.4};//
-		for(double vM: vafMax)
-			for(double vMin: vafMin)
-				for(double vE: vafEr)
-					for(double vCD: vafClusDif)
-						if(vM>=vMin)
-						{
-							Parameters.MAX_VAF_ABSENT=vMin;
-							Parameters.MIN_VAF_PRESENT=vM;
-							Parameters.VAF_ERROR_MARGIN=vE;
-							Parameters.MAX_COLLAPSE_CLUSTER_DIFF=vCD;
-							
-							callSVs(params);
-						}
+	    if(!sweep){
+			double vafMax = .05;
+			double vafMin = .05;
+			double vafEr = .04;
+			double vafClusDif =.3;
+			if(cmdLine.hasOption("min")){
+				Parameters.MIN_VAF_PRESENT = Double.parseDouble(cmdLine.getOptionValue("min"));
+			}
+			else{
+				Parameters.MIN_VAF_PRESENT=vafMin;
+			}
+			
+			if(cmdLine.hasOption("max")){
+				Parameters.MAX_VAF_ABSENT = Double.parseDouble(cmdLine.getOptionValue("max"));
+			}
+			else{
+				Parameters.MAX_VAF_ABSENT=vafMax;
+			}
+			if(cmdLine.hasOption("clus")){
+				Parameters.MAX_COLLAPSE_CLUSTER_DIFF=Double.parseDouble(cmdLine.getOptionValue("clus"));
+			}
+			else{
+				Parameters.MAX_COLLAPSE_CLUSTER_DIFF = vafClusDif;
+			}
+			if(cmdLine.hasOption("err")){
+				Parameters.VAF_ERROR_MARGIN = Double.parseDouble(cmdLine.getOptionValue("err"));
+			}
+			else{
+				Parameters.VAF_ERROR_MARGIN=vafEr;
+			}
+
+			
+			
+			
+			
+			
+	
+			callSVs(params);
+			
+	    }
+		else{
+			double vafMax[] = {.05,.1,.2,.3,.4};
+			double vafMin[] = {.05,.1,.2,.3,.4};
+			double vafEr[] = {.02,.04,.06,.08,.1};
+			double vafClusDif[] = {.05,.1,.2,.3,.4};
+			for(double vM: vafMax)
+				for(double vMin: vafMin)
+					for(double vE: vafEr)
+						for(double vCD: vafClusDif)
+							if(vM>=vMin)
+							{
+								Parameters.MAX_VAF_ABSENT=vMin;
+								Parameters.MIN_VAF_PRESENT=vM;
+								Parameters.VAF_ERROR_MARGIN=vE;
+								Parameters.MAX_COLLAPSE_CLUSTER_DIFF=vCD;
+								
+								callSVs(params);
+							}
+			}
 	}
 	
 	protected static class Args {
 		String treeFilePath;
 		String svFilePath;
-		String snvFilePath;//Experimental
+		String snvFilePath;
 		int numSamples;
 		String outputFilePath;
 		int negativeThreshold;
@@ -424,7 +468,7 @@ public class LapsiEngine {
 			fw.write("ValidSV"+goodcount+"\t");
 			fw.write("invalidSV"+badcount+"\t");
 			if(t.getSVList().size()!=0)
-				s+= t.bProfile+"\t";//t.getSVList().get(0).bProfile+"\t";
+				s+= t.bProfile+"\t";
 			s+= Arrays.toString(t.getVAFs())+"\t";
 			for(SVEntry sv: t.getSVList()){
 				if(!sv.description.equals("Centroid") && !sv.description.equals("snv"))
@@ -471,9 +515,8 @@ public class LapsiEngine {
 			if(nodes.containsKey(t.getNodeId()))
 					continue;
 			String s = ""+t.getNodeId()+"\t";
-			//if(t.getSVList().size()==0)
-				//System.out.println("test");
-			s+= t.bProfile+"\t";//s+= t.getSVList().get(0).bProfile+"\t";
+			
+			s+= t.bProfile+"\t";
 			s+= Arrays.toString(t.getVAFs())+"\t";
 			for(SVEntry sv: t.getSVList()){
 				if(!sv.description.equals("Centroid") && !sv.description.equals("snv"))
@@ -499,42 +542,39 @@ public class LapsiEngine {
 				filteredSVs++;
 		}
 		for(TreeNode t: mapper.potentialNewNodes){
-			if(t.getSVList().size()>1)
-				unaddedNodeSVCount+=t.getSVList().size();
-			else
-				insignificantNodeSVCount+=t.getSVList().size();
+			if(t.getSVList().size()>1){
+				for(SVEntry sv: t.getSVList()){
+					if(!sv.description.equals("Centroid") && !sv.description.equals("snv"))
+						unaddedNodeSVCount++;
+				}
+			}
+			else{
+				for(SVEntry sv: t.getSVList()){
+					if(!sv.description.equals("Centroid") && !sv.description.equals("snv"))
+						insignificantNodeSVCount++;
+				}
+			}
 		}
 		for(Integer i: tree.nodes.keySet()){
 			
 			TreeNode t = tree.nodes.get(i);
 			for(SVEntry sv: t.getSVList())
-				if(!sv.description.equals("Centroid"))
+				if(!sv.description.equals("Centroid") && !sv.description.equals("snv"))
 					addedNodeSVCount++;
 			//addedNodeSVCount+=t.getSVList().size();
 			
 		}
 		
-		fw.write("addedNodeSVCount"+addedNodeSVCount+"\n");
-		fw.write("unaddedNodeSVCount"+unaddedNodeSVCount+"\n");
-		fw.write("insignificantNodeSVCount"+insignificantNodeSVCount+"\n");
-		fw.write("filteredSVs"+filteredSVs+"\n");
-		fw.write("(addedNodeSVCount+unaddedNodeSVCount+insignificantNodeSVCount+filteredSVs)"+(addedNodeSVCount+unaddedNodeSVCount+insignificantNodeSVCount+filteredSVs)+"\n");
+		fw.write("Added_Node_SV_Count:\t"+addedNodeSVCount+"\n");
+		fw.write("Unadded_Node_SV_Count:\t"+unaddedNodeSVCount+"\n");
+		fw.write("Insignificant_Node_SV_Count:\t"+insignificantNodeSVCount+"\n");
+		fw.write("filtered_SVs:\t"+filteredSVs+"\n");
+		fw.write("SVs_in_total:\t"+(addedNodeSVCount+unaddedNodeSVCount+insignificantNodeSVCount+filteredSVs)+"\n");
 		
-		//System.out.println(unaddedNodeSVCount);
-		//System.out.println(insignificantNodeSVCount);
-		//System.out.println(filteredSVs);
-		//System.out.println("Sum "+ (addedNodeSVCount+unaddedNodeSVCount+insignificantNodeSVCount+filteredSVs));
+		
 		
 		int negCount = 0;
-		//for(SVEntry s: mapper.svs){
-			//System.out.println(s.id+" "+s.assignedNodeId);
-			//if(s.assignedNodeId==-1||s.assignedNodeId==-2){
-			//	System.out.println(s.bProfile);
-			//}
-			
 		
-		//}
-		//System.out.println(negCount);
 	}
 	
 	private static int SVCounterGoodOnly(LineageTree t, Args args){

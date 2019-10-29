@@ -33,8 +33,19 @@ python prepareMeltosInput.py -i regions.bed -b PD9770A.bam,PD9770C.bam,PD9770D.b
 - "-numSamples \<integer\>": count of the number of spatially distinct samples in your sv and ssnv files.
 
 #### Optional:
- - "-outputFile \<filename\>:" the prefix you want for your outputfiles. If not specified, defaults to the name of your sv file +".lapsi"
+ - "-outputFile \<filename\>": the prefix you want for your outputfiles. If not specified, defaults to the name of your sv file +".meltos"
   NOTE: This will overwrite files with the same name. This prefix should include the directory in which you want the files to go.
+
+ - "-sweep": have meltos run a series of  tests with combinations of different parameters.
+
+-"-min \<arg\>":   Set an upper bound for an abscence in a sample.
+
+-"-max \<arg\>":   Set a lower bound for presence in a sample.
+
+-"-clus \<arg\>":  Set a max difference in VAF allowed for combining variant clusters.
+
+-"-err \<arg\>":   Set how lenient to be with phylogenic constraints.
+
 
 
 ### Output
@@ -49,3 +60,9 @@ A repeat of information from the SV assignments, but only showing nodes that wer
 A list of nodes that were created by the algorithm but were unable to be placed into the lineage tree, together with the indices of their SV assignments.
 
 Finally, the tree's edges are displayed, with the index of the parent node on the left, and the index of the child node on the right.
+
+### Run Example
+
+```
+java -jar Meltos.jar -treeFile licheeTestTree.txt -svFile ProcessedSVInput.txt -numSamples 6 -ssnvFile snvVAFFile.txt
+```

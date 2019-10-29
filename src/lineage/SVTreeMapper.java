@@ -57,7 +57,7 @@ public class SVTreeMapper {
 			ssnvStats[x] = new SampleStats(oldSSNVs, x);//experimental
 			svStats[x] = new SampleStats(inputSVs, x);//experimental
 		}
-		FileWriter fwV = new FileWriter("testdata/translatedEstimatedVAFs.txt");
+		
 		for(int x = 0; x<inputSVs.size(); x++){
 			SVEntry sv = inputSVs.get(x);
 			for(int s = 0; s<svStats.length; s++){
@@ -70,10 +70,10 @@ public class SVTreeMapper {
 				}
 			}
 			sv.makeProfile(Parameters.MAX_VAF_ABSENT,Parameters.MIN_VAF_PRESENT);
-			fwV.write(sv.id+"\t"+Arrays.toString(sv.approxVAF)+"\n");
+			
 			//System.out.println(sv);
 		}
-		fwV.close();
+		
 		filterCount0s = 0;
 		filterCountNodes = 0;
 		filterCountsSim = 0;
